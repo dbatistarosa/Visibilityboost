@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     await resend.emails.send({
       from: 'VisibilityBoost <onboarding@resend.dev>',
-      to: 'Dbatistarosa89@gmail.com',
+      to: 'dbatistarosa89@gmail.com',
       subject: `New Free Audit Request — ${business}`,
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto">

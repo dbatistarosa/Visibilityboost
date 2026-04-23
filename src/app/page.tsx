@@ -549,17 +549,42 @@ function Results() {
 /* ── Booking Form ── */
 function Booking() {
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const [errors, setErrors] = useState<Record<string, boolean>>({})
 
-  function handleSubmit() {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const data = new FormData(e.currentTarget)
     const required = ['fname','lname','email','business']
     const newErrors: Record<string,boolean> = {}
     required.forEach(id => {
-      const el = document.getElementById(id) as HTMLInputElement
-      if (!el?.value.trim()) newErrors[id] = true
+      if (!(data.get(id) as string)?.trim()) newErrors[id] = true
     })
     if (Object.keys(newErrors).length) { setErrors(newErrors); return }
-    setSubmitted(true)
+    setLoading(true)
+    setSubmitError('')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fname: data.get('fname'),
+          lname: data.get('lname'),
+          email: data.get('email'),
+          phone: data.get('phone'),
+          business: data.get('business'),
+          industry: data.get('industry'),
+          challenge: data.get('challenge'),
+        }),
+      })
+      if (!res.ok) throw new Error()
+      setSubmitted(true)
+    } catch {
+      setSubmitError('Something went wrong. Please try again or email us directly.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputStyle = (id: string) => ({
@@ -598,14 +623,14 @@ function Booking() {
           <Reveal delay={0.2}>
             <div className="rounded-2xl p-11 border" style={{ background: '#080f1e', borderColor: 'rgba(255,255,255,0.06)' }}>
               {!submitted ? (
-                <>
+                <form onSubmit={handleSubmit}>
                   <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Book Your Free Audit</h3>
                   <p className="text-[13px] mb-8" style={{ color: 'rgba(255,255,255,0.35)' }}>We'll reply within 2 business hours with your audit link.</p>
                   <div className="grid grid-cols-2 gap-3.5 mb-4.5">
                     {[{id:'fname',label:'First Name',placeholder:'John'},{id:'lname',label:'Last Name',placeholder:'Smith'}].map(f => (
                       <div key={f.id}>
                         <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>{f.label} *</label>
-                        <input id={f.id} type="text" placeholder={f.placeholder} style={inputStyle(f.id)} />
+                        <input id={f.id} name={f.id} type="text" placeholder={f.placeholder} style={inputStyle(f.id)} />
                       </div>
                     ))}
                   </div>
@@ -616,30 +641,34 @@ function Booking() {
                   ].map(f => (
                     <div key={f.id} style={{ marginBottom: 16 }}>
                       <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>{f.label} {f.id !== 'phone' ? '*' : ''}</label>
-                      <input id={f.id} type={f.type} placeholder={f.placeholder} style={inputStyle(f.id)} />
+                      <input id={f.id} name={f.id} type={f.type} placeholder={f.placeholder} style={inputStyle(f.id)} />
                     </div>
                   ))}
                   <div style={{ marginBottom: 16 }}>
                     <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>Your Industry</label>
-                    <select style={{ ...inputStyle(''), cursor: 'pointer', color: 'rgba(255,255,255,0.7)' }}>
+                    <select name="industry" style={{ ...inputStyle(''), cursor: 'pointer', color: 'rgba(255,255,255,0.7)' }}>
                       <option value="">Select your business type...</option>
                       {['Plumbing / HVAC / Electrical','Legal Services','Medical / Dental / Health','Cleaning Services','Landscaping / Lawn Care','Construction / Contracting','Accounting / Finance','Real Estate','Restaurant / Food','Retail / Shop','Other'].map(o => <option key={o}>{o}</option>)}
                     </select>
                   </div>
                   <div style={{ marginBottom: 20 }}>
                     <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>Biggest Marketing Challenge</label>
-                    <textarea placeholder="e.g. We don't show up on Google, we have no reviews..." style={{ ...inputStyle(''), resize: 'vertical', minHeight: 80 }} />
+                    <textarea name="challenge" placeholder="e.g. We don't show up on Google, we have no reviews..." style={{ ...inputStyle(''), resize: 'vertical', minHeight: 80 }} />
                   </div>
+                  {submitError && (
+                    <p className="text-[13px] mb-3 text-center" style={{ color: 'rgba(239,68,68,0.8)' }}>{submitError}</p>
+                  )}
                   <button
-                    onClick={handleSubmit}
-                    className="w-full py-4 rounded-xl font-extrabold text-[14px] tracking-wide flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5"
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-4 rounded-xl font-extrabold text-[14px] tracking-wide flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
                     style={{ background: '#c8a44a', color: '#080f1e' }}
                   >
-                    Book My Free Audit
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    {loading ? 'Sending…' : 'Book My Free Audit'}
+                    {!loading && <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                   </button>
                   <p className="text-center text-[11px] mt-3" style={{ color: 'rgba(255,255,255,0.2)', lineHeight: 1.6 }}>🔒 We never share your information.</p>
-                </>
+                </form>
               ) : (
                 <div className="text-center py-10">
                   <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-5" style={{ background: 'rgba(26,138,80,0.15)', color: '#4ade80' }}>✓</div>

@@ -1,62 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-
-/* ── Logo Icon ── */
-function LogoIcon({ size = 36 }: { size?: number }) {
-  return (
-    <div
-      style={{ width: size, height: size, background: '#c8a44a', borderRadius: size * 0.22 }}
-      className="flex items-end justify-center gap-[3px] pb-[6px] px-[8px] flex-shrink-0"
-    >
-      <div style={{ width: 4, height: size * 0.28, background: '#080f1e', borderRadius: 2 }} />
-      <div style={{ width: 4, height: size * 0.44, background: '#080f1e', borderRadius: 2 }} />
-      <div style={{ width: 4, height: size * 0.6,  background: '#080f1e', borderRadius: 2 }} />
-    </div>
-  )
-}
-
-/* ── Navbar ── */
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', h)
-    return () => window.removeEventListener('scroll', h)
-  }, [])
-
-  return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-[72px] transition-all duration-300 ${scrolled ? 'bg-[#080f1e]/95 backdrop-blur-xl shadow-[0_1px_0_rgba(255,255,255,0.06)]' : ''}`}>
-      <a href="#hero" className="flex items-center gap-3">
-        <LogoIcon />
-        <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: '#fff', letterSpacing: '-0.3px' }}>
-          Visibility<span style={{ color: '#c8a44a' }}>Boost</span>
-        </span>
-      </a>
-
-      <ul className="hidden md:flex items-center gap-8 list-none">
-        {['How It Works','Services','Pricing','Results','FAQ'].map(item => (
-          <li key={item}>
-            <a
-              href={`#${item.toLowerCase().replace(/\s+/g,'').replace('howitworks','how').replace('pricing','packages')}`}
-              className="text-[13px] font-medium text-white/60 hover:text-white transition-colors"
-            >
-              {item}
-            </a>
-          </li>
-        ))}
-      </ul>
-
-      <a
-        href="#booking"
-        className="text-[13px] font-bold px-5 py-2.5 rounded-lg transition-all duration-200 hover:-translate-y-px"
-        style={{ background: '#c8a44a', color: '#080f1e' }}
-      >
-        Book Free Audit →
-      </a>
-    </nav>
-  )
-}
+import { useState } from 'react'
+import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
+import { Reveal } from '@/components/Reveal'
+import { ScrollTop } from '@/components/ScrollTop'
 
 /* ── Ticker ── */
 function Ticker() {
@@ -72,32 +20,6 @@ function Ticker() {
           </span>
         ))}
       </div>
-    </div>
-  )
-}
-
-/* ── Reveal wrapper ── */
-function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode, delay?: number, className?: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [vis, setVis] = useState(false)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true) }, { threshold: 0.1 })
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        opacity: vis ? 1 : 0,
-        transform: vis ? 'translateY(0)' : 'translateY(40px)',
-        transition: `opacity 0.8s cubic-bezier(0.22,1,0.36,1) ${delay}s, transform 0.8s cubic-bezier(0.22,1,0.36,1) ${delay}s`
-      }}
-    >
-      {children}
     </div>
   )
 }
@@ -725,65 +647,6 @@ function FinalCTA() {
       </div>
     </section>
   )
-}
-
-/* ── Footer ── */
-function Footer() {
-  const cols = [
-    { title: 'Services', links: ['Local SEO','Google Business Profile','Social Media','Website Design','Review Management'] },
-    { title: 'Company', links: ['How It Works','Results','Pricing','FAQ','Book Audit'] },
-    { title: 'Contact', links: ['hello@visibilityboost.com','Book a Call','LinkedIn','Instagram','Facebook'] },
-  ]
-  return (
-    <footer style={{ background: '#03080f', borderTop: '1px solid rgba(255,255,255,0.04)', padding: '64px 0 32px' }}>
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="grid md:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-14">
-          <div>
-            <a href="#hero" className="inline-flex items-center gap-3 mb-4">
-              <LogoIcon />
-              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: '#fff' }}>Visibility<span style={{ color: '#c8a44a' }}>Boost</span></span>
-            </a>
-            <p className="text-[14px] leading-relaxed max-w-[260px]" style={{ color: 'rgba(255,255,255,0.3)' }}>We make local businesses impossible to ignore. Local SEO, social media, and web design — all in one place, at a price that makes sense.</p>
-          </div>
-          {cols.map(col => (
-            <div key={col.title}>
-              <h4 className="text-[11px] font-bold tracking-[2px] uppercase mb-4" style={{ color: 'rgba(255,255,255,0.3)' }}>{col.title}</h4>
-              <ul className="list-none space-y-2.5">
-                {col.links.map(l => (
-                  <li key={l}><a href="#" className="text-[14px] transition-colors hover:text-[#c8a44a]" style={{ color: 'rgba(255,255,255,0.4)' }}>{l}</a></li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-between items-center flex-wrap gap-4 pt-7 border-t" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
-          <p className="text-[12px]" style={{ color: 'rgba(255,255,255,0.2)' }}>© 2026 VisibilityBoost LLC · All rights reserved · Serving local businesses across the United States</p>
-          <div className="flex gap-3">
-            {['in','ig','fb','X'].map(s => (
-              <a key={s} href="#" className="w-9 h-9 rounded-lg flex items-center justify-center border text-[14px] transition-all hover:text-[#c8a44a]" style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)' }}>{s}</a>
-            ))}
-          </div>
-        </div>
-      </div>
-    </footer>
-  )
-}
-
-/* ── Scroll to top ── */
-function ScrollTop() {
-  const [show, setShow] = useState(false)
-  useEffect(() => {
-    const h = () => setShow(window.scrollY > 400)
-    window.addEventListener('scroll', h)
-    return () => window.removeEventListener('scroll', h)
-  }, [])
-  return show ? (
-    <button
-      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      className="fixed bottom-8 right-8 w-11 h-11 rounded-full flex items-center justify-center text-lg font-bold z-50 transition-all duration-200 hover:-translate-y-0.5"
-      style={{ background: '#c8a44a', color: '#080f1e' }}
-    >↑</button>
-  ) : null
 }
 
 /* ── PAGE ── */

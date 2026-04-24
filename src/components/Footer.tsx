@@ -8,6 +8,7 @@ const COLS = [
       { label: 'Google Business Profile', href: '/services/local-seo' },
       { label: 'Social Media',            href: '/services/social-media' },
       { label: 'Website Design',          href: '/services/website-design' },
+      { label: 'AI Automations',          href: '/services/ai-automations' },
       { label: 'Review Management',       href: '/services/local-seo' },
     ],
   },

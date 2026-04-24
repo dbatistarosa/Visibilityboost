@@ -3,6 +3,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
 import { FaqAccordion } from '@/components/FaqAccordion'
+import { PricingCards, type PricingPlan } from '@/components/PricingCards'
 
 export const metadata: Metadata = {
   title: 'Free Website Design for Local Businesses | VisibilityBoost',
@@ -33,6 +34,57 @@ const PROCESS = [
   { n: '2', title: 'Design & Build', desc: 'We design and build your site in 10–14 business days. You\'ll see a staging preview before anything goes live.' },
   { n: '3', title: 'Review & Refine', desc: 'Two rounds of revisions included. We adjust copy, layout, colors, or images until it\'s exactly right.' },
   { n: '4', title: 'Launch & Handover', desc: 'We deploy to your domain and hand over full access. You own the code, the hosting account, and every file.' },
+]
+
+const MAINTENANCE_PLANS: PricingPlan[] = [
+  {
+    name: 'Basic',
+    nickname: '"Keep it running"',
+    monthlyPrice: 199,
+    annualPrice: 179,
+    popular: false,
+    freeWebsite: true,
+    features: [
+      'Monthly backups & security monitoring',
+      'Plugin / CMS updates',
+      'Performance monitoring',
+      '1 content edit/month',
+      'Uptime monitoring',
+    ],
+    cta: 'Get Started',
+  },
+  {
+    name: 'Standard',
+    nickname: '"Active maintenance"',
+    monthlyPrice: 349,
+    annualPrice: 314,
+    popular: true,
+    freeWebsite: true,
+    features: [
+      'Everything in Basic, plus:',
+      '2 content updates/month',
+      'Speed optimization',
+      'Monthly performance report',
+      'Priority support (24-hr)',
+    ],
+    cta: 'Start Care Plan →',
+  },
+  {
+    name: 'Elite',
+    nickname: '"Hands-off growth"',
+    monthlyPrice: 599,
+    annualPrice: 539,
+    popular: false,
+    freeWebsite: true,
+    features: [
+      'Everything in Standard, plus:',
+      'Unlimited content updates',
+      '1 new landing page/month',
+      'Bi-weekly performance reports',
+      'Priority support (4-hr)',
+    ],
+    cta: 'Go Elite',
+  },
 ]
 
 const FAQS: [string, string][] = [
@@ -304,6 +356,207 @@ export default function WebsiteDesignPage() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Website Builds */}
+      <section className="py-28" style={{ background: '#f8f8f6' }}>
+        <div className="container mx-auto px-6 md:px-12">
+          <Reveal className="text-center mb-14">
+            <p className="text-[11px] font-semibold tracking-[3px] uppercase mb-3" style={{ color: '#c8a44a' }}>
+              Website Builds
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 'clamp(32px,4vw,48px)',
+                fontWeight: 600,
+                color: '#080f1e',
+                letterSpacing: '-1px',
+              }}
+            >
+              One-time build pricing.<br />
+              <em style={{ color: '#c8a44a' }}>Or free with annual plan.</em>
+            </h2>
+            <p style={{ fontSize: 15, color: '#717d96', maxWidth: 520, margin: '12px auto 0', lineHeight: 1.7 }}>
+              Sign any annual marketing plan (Local SEO or Social Media) and the Starter or Professional build is included at no extra cost.
+            </p>
+          </Reveal>
+          <div className="grid md:grid-cols-3 gap-6 items-start">
+            {[
+              {
+                name: 'Starter Build',
+                price: '$1,497',
+                period: 'one-time',
+                free: true,
+                popular: false,
+                features: [
+                  '5-page professional website',
+                  'Mobile-first design',
+                  'SEO-optimized from day one',
+                  'Contact form + click-to-call',
+                  '2 rounds of revisions',
+                  'Delivered in 2–3 weeks',
+                ],
+                cta: 'Book Free Audit',
+              },
+              {
+                name: 'Professional Build',
+                price: '$2,497',
+                period: 'one-time',
+                free: true,
+                popular: true,
+                features: [
+                  'Up to 8 pages',
+                  'Everything in Starter, plus:',
+                  'Blog setup & styling',
+                  'Custom animations',
+                  '3 rounds of revisions',
+                  'Priority delivery (10 days)',
+                ],
+                cta: 'Get Started →',
+              },
+              {
+                name: 'Custom Build',
+                price: 'From $3,997',
+                period: 'one-time',
+                free: false,
+                popular: false,
+                features: [
+                  '10+ pages',
+                  'E-commerce or booking system',
+                  'Custom integrations & APIs',
+                  'Unlimited revisions',
+                  'Dedicated project manager',
+                  'Ongoing priority support',
+                ],
+                cta: 'Get a Quote',
+              },
+            ].map((b, i) => (
+              <Reveal key={i} delay={i * 0.1}>
+                <div
+                  className="rounded-2xl p-9 relative border transition-all duration-300 hover:-translate-y-1"
+                  style={{
+                    background: b.popular ? '#080f1e' : '#fff',
+                    borderColor: b.popular ? '#c8a44a' : '#e9eaee',
+                    transform: b.popular ? 'translateY(-8px) scale(1.02)' : undefined,
+                    boxShadow: b.popular ? '0 32px 64px rgba(8,15,30,0.2)' : undefined,
+                  }}
+                >
+                  {b.popular && (
+                    <div
+                      className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] font-black tracking-[2px] uppercase whitespace-nowrap"
+                      style={{ background: '#c8a44a', color: '#080f1e' }}
+                    >
+                      ⭐ Most Popular
+                    </div>
+                  )}
+                  <div className="text-[13px] font-bold tracking-[2px] uppercase mb-2" style={{ color: '#c8a44a' }}>
+                    {b.name}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Cormorant Garamond', Georgia, serif",
+                      fontSize: 44,
+                      fontWeight: 700,
+                      color: b.popular ? '#fff' : '#080f1e',
+                      lineHeight: 1,
+                      marginBottom: 4,
+                    }}
+                  >
+                    {b.price}
+                  </div>
+                  <div className="text-[13px] mb-3" style={{ color: b.popular ? 'rgba(255,255,255,0.35)' : '#a8aec0' }}>
+                    {b.period}
+                  </div>
+                  {b.free && (
+                    <div
+                      className="rounded-xl p-3 mb-4 border text-[12px] font-semibold"
+                      style={{
+                        background: 'rgba(200,164,74,0.08)',
+                        borderColor: 'rgba(200,164,74,0.2)',
+                        color: '#c8a44a',
+                      }}
+                    >
+                      🎁 FREE with any annual marketing plan
+                    </div>
+                  )}
+                  <div className="h-px my-4" style={{ background: b.popular ? 'rgba(255,255,255,0.08)' : '#e9eaee' }} />
+                  <ul className="list-none mb-8 space-y-1">
+                    {b.features.map(f => (
+                      <li
+                        key={f}
+                        className="flex gap-2.5 items-start text-[13px] py-1.5 border-b last:border-0"
+                        style={{
+                          borderColor: b.popular ? 'rgba(255,255,255,0.05)' : '#f5f6f8',
+                          color: b.popular ? 'rgba(255,255,255,0.6)' : '#717d96',
+                        }}
+                      >
+                        <span
+                          className="flex items-center justify-center text-[9px] font-black flex-shrink-0 mt-0.5 rounded-full"
+                          style={{ background: 'rgba(26,138,80,0.12)', color: '#1a8a50', width: 18, height: 18 }}
+                        >
+                          ✓
+                        </span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <a
+                    href="/#booking"
+                    className="block w-full text-center py-3.5 rounded-xl font-bold text-[14px] tracking-wide transition-all duration-200 hover:-translate-y-0.5 border-2"
+                    style={
+                      b.popular
+                        ? { background: '#c8a44a', color: '#080f1e', borderColor: '#c8a44a' }
+                        : { background: 'transparent', color: '#080f1e', borderColor: '#e9eaee' }
+                    }
+                  >
+                    {b.cta}
+                  </a>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Maintenance Plans */}
+      <section className="py-28" style={{ background: '#fff' }}>
+        <div className="container mx-auto px-6 md:px-12">
+          <Reveal className="text-center mb-14">
+            <p className="text-[11px] font-semibold tracking-[3px] uppercase mb-3" style={{ color: '#c8a44a' }}>
+              Website Maintenance
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 'clamp(32px,4vw,48px)',
+                fontWeight: 600,
+                color: '#080f1e',
+                letterSpacing: '-1px',
+              }}
+            >
+              Keep it fast, secure,<br />
+              <em style={{ color: '#c8a44a' }}>and always updated.</em>
+            </h2>
+            <p style={{ fontSize: 15, color: '#717d96', maxWidth: 500, margin: '12px auto 0', lineHeight: 1.7 }}>
+              Your website needs ongoing care. We handle updates, backups, and improvements every month.
+              Annual plan includes a free website.
+            </p>
+          </Reveal>
+          <PricingCards
+            plans={MAINTENANCE_PLANS}
+            accentNote="FREE 5-page website included with any annual maintenance plan"
+          />
+          <Reveal className="text-center mt-10">
+            <p className="text-[14px]" style={{ color: '#a8aec0' }}>
+              Already have a website?{' '}
+              <a href="/#booking" style={{ color: '#c8a44a', fontWeight: 600 }}>
+                Book a free audit
+              </a>{' '}
+              and we'll recommend the right maintenance level.
+            </p>
+          </Reveal>
         </div>
       </section>
 

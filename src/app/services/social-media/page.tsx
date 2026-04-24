@@ -3,6 +3,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
 import { FaqAccordion } from '@/components/FaqAccordion'
+import { PricingCards, type PricingPlan } from '@/components/PricingCards'
 
 export const metadata: Metadata = {
   title: 'Social Media Management for Local Businesses | VisibilityBoost',
@@ -65,10 +66,59 @@ const PLATFORMS = [
   },
 ]
 
-const PLANS = [
-  { name: 'Starter', posts: '8 posts/mo', reels: '—', platforms: 'FB + IG', approval: 'Monthly calendar' },
-  { name: 'Growth', posts: '16 posts/mo', reels: '2 Reels/mo', platforms: 'FB + IG + Google', approval: 'Monthly calendar' },
-  { name: 'Authority', posts: '24 posts/mo', reels: '4 Reels/mo', platforms: 'FB + IG + Google', approval: 'Monthly calendar' },
+const SOCIAL_PLANS: PricingPlan[] = [
+  {
+    name: 'Starter',
+    nickname: '"Just stay active"',
+    monthlyPrice: 399,
+    annualPrice: 359,
+    popular: false,
+    freeWebsite: true,
+    features: [
+      '8 posts/month',
+      'Facebook + Instagram',
+      'Professional captions & hashtags',
+      'Monthly content calendar',
+      'Scheduled publishing',
+      'Comment monitoring',
+    ],
+    cta: 'Get Started',
+  },
+  {
+    name: 'Growth',
+    nickname: '"Build real reach"',
+    monthlyPrice: 799,
+    annualPrice: 719,
+    popular: true,
+    freeWebsite: true,
+    features: [
+      'Everything in Starter, plus:',
+      '16 posts/month',
+      'Google Business Posts (weekly)',
+      '2 Reels/short videos/month',
+      'Monthly strategy call (30 min)',
+      'Story management',
+    ],
+    cta: 'Grow My Presence →',
+  },
+  {
+    name: 'Premium',
+    nickname: '"Be everywhere"',
+    monthlyPrice: 1499,
+    annualPrice: 1349,
+    popular: false,
+    freeWebsite: true,
+    features: [
+      'Everything in Growth, plus:',
+      '24 posts/month',
+      '+ LinkedIn management',
+      '4 Reels/videos/month',
+      'Stories & highlights management',
+      'Content strategy sessions',
+      'Priority support (4-hr)',
+    ],
+    cta: 'Dominate Social',
+  },
 ]
 
 const FAQS: [string, string][] = [
@@ -348,52 +398,41 @@ export default function SocialMediaPage() {
         </div>
       </section>
 
-      {/* Plan comparison */}
-      <section className="py-20" style={{ background: '#f8f8f6' }}>
+      {/* Pricing */}
+      <section className="py-28" style={{ background: '#f8f8f6' }}>
         <div className="container mx-auto px-6 md:px-12">
-          <Reveal className="text-center mb-12">
+          <Reveal className="text-center mb-14">
+            <p className="text-[11px] font-semibold tracking-[3px] uppercase mb-3" style={{ color: '#c8a44a' }}>
+              Pricing
+            </p>
             <h2
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: 'clamp(28px,3.5vw,40px)',
+                fontSize: 'clamp(32px,4vw,48px)',
                 fontWeight: 600,
                 color: '#080f1e',
-                letterSpacing: '-0.5px',
+                letterSpacing: '-1px',
               }}
             >
-              Social media by plan
+              Social media pricing.<br />
+              <em style={{ color: '#c8a44a' }}>Built for local businesses.</em>
             </h2>
+            <p style={{ fontSize: 15, color: '#717d96', maxWidth: 500, margin: '12px auto 0', lineHeight: 1.7 }}>
+              Monthly for flexibility. Annual saves ~10% and includes a free 5-page website.
+            </p>
           </Reveal>
-          <Reveal delay={0.1}>
-            <div className="overflow-x-auto rounded-2xl border" style={{ borderColor: '#e9eaee' }}>
-              <table className="w-full" style={{ borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ background: '#080f1e' }}>
-                    <th className="text-left px-6 py-4 text-[12px] font-bold tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>Plan</th>
-                    <th className="text-left px-6 py-4 text-[12px] font-bold tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>Posts / Month</th>
-                    <th className="text-left px-6 py-4 text-[12px] font-bold tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>Reels & Video</th>
-                    <th className="text-left px-6 py-4 text-[12px] font-bold tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>Platforms</th>
-                    <th className="text-left px-6 py-4 text-[12px] font-bold tracking-[2px] uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>Approval</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {PLANS.map((p, i) => (
-                    <tr key={i} style={{ borderTop: '1px solid #e9eaee', background: i === 1 ? 'rgba(200,164,74,0.04)' : '#fff' }}>
-                      <td className="px-6 py-5 font-bold text-[14px]" style={{ color: i === 1 ? '#c8a44a' : '#080f1e' }}>{p.name}</td>
-                      <td className="px-6 py-5 text-[14px]" style={{ color: '#717d96' }}>{p.posts}</td>
-                      <td className="px-6 py-5 text-[14px]" style={{ color: '#717d96' }}>{p.reels}</td>
-                      <td className="px-6 py-5 text-[14px]" style={{ color: '#717d96' }}>{p.platforms}</td>
-                      <td className="px-6 py-5 text-[14px]" style={{ color: '#717d96' }}>{p.approval}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
-          <Reveal delay={0.15} className="text-center mt-6">
-            <a href="/pricing" className="text-[14px] font-semibold transition-colors hover:opacity-80" style={{ color: '#c8a44a' }}>
-              See full pricing details →
-            </a>
+          <PricingCards
+            plans={SOCIAL_PLANS}
+            accentNote="FREE 5-page website included with any annual plan"
+          />
+          <Reveal className="text-center mt-10">
+            <p className="text-[14px]" style={{ color: '#a8aec0' }}>
+              Not sure which plan?{' '}
+              <a href="/#booking" style={{ color: '#c8a44a', fontWeight: 600 }}>
+                Book a free audit
+              </a>{' '}
+              — we'll look at your current social presence and recommend the right tier.
+            </p>
           </Reveal>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
 import { FaqAccordion } from '@/components/FaqAccordion'
+import { PricingCards, type PricingPlan } from '@/components/PricingCards'
 
 export const metadata: Metadata = {
   title: 'Local SEO & Google Business Profile Management | VisibilityBoost',
@@ -78,6 +79,60 @@ const TIMELINE = [
       'Authority builds — results accelerate, not plateau',
       'Monthly optimization continues: new keywords, new content',
     ],
+  },
+]
+
+const LOCAL_SEO_PLANS: PricingPlan[] = [
+  {
+    name: 'Essential',
+    nickname: '"Put me on the map"',
+    monthlyPrice: 397,
+    annualPrice: 357,
+    popular: false,
+    freeWebsite: true,
+    features: [
+      'GBP complete setup & optimization',
+      'Local keyword research (10 keywords)',
+      'On-page SEO (homepage + 3 pages)',
+      'Review request system setup',
+      'Monthly plain-English report',
+      'Email support (48-hr response)',
+    ],
+    cta: 'Get Started',
+  },
+  {
+    name: 'Professional',
+    nickname: '"Dominate my area"',
+    monthlyPrice: 697,
+    annualPrice: 627,
+    popular: true,
+    freeWebsite: true,
+    features: [
+      'Everything in Essential, plus:',
+      'Citation building (30+ directories)',
+      'Competitor gap analysis',
+      'Content updates (2/month)',
+      'Monthly strategy call (30 min)',
+      'Review response management (24-hr)',
+    ],
+    cta: 'Start Growing →',
+  },
+  {
+    name: 'Authority',
+    nickname: '"#1 in my city"',
+    monthlyPrice: 1197,
+    annualPrice: 1077,
+    popular: false,
+    freeWebsite: true,
+    features: [
+      'Everything in Professional, plus:',
+      'Citation building (50+ directories)',
+      '2 SEO blog posts/month',
+      'Link building strategy',
+      'Bi-weekly strategy calls',
+      'Priority support (4-hr response)',
+    ],
+    cta: 'Own My Market',
   },
 ]
 
@@ -361,6 +416,45 @@ export default function LocalSEOPage() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-28" style={{ background: '#f8f8f6' }}>
+        <div className="container mx-auto px-6 md:px-12">
+          <Reveal className="text-center mb-14">
+            <p className="text-[11px] font-semibold tracking-[3px] uppercase mb-3" style={{ color: '#c8a44a' }}>
+              Pricing
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 'clamp(32px,4vw,48px)',
+                fontWeight: 600,
+                color: '#080f1e',
+                letterSpacing: '-1px',
+              }}
+            >
+              Transparent pricing.<br />
+              <em style={{ color: '#c8a44a' }}>No agency markup.</em>
+            </h2>
+            <p style={{ fontSize: 15, color: '#717d96', maxWidth: 500, margin: '12px auto 0', lineHeight: 1.7 }}>
+              Choose monthly for flexibility or annual to save ~10% and get a free 5-page website.
+            </p>
+          </Reveal>
+          <PricingCards
+            plans={LOCAL_SEO_PLANS}
+            accentNote="FREE 5-page website included with any annual plan"
+          />
+          <Reveal className="text-center mt-10">
+            <p className="text-[14px]" style={{ color: '#a8aec0' }}>
+              Not sure which plan?{' '}
+              <a href="/#booking" style={{ color: '#c8a44a', fontWeight: 600 }}>
+                Book a free audit
+              </a>{' '}
+              — we'll recommend exactly what you need.
+            </p>
+          </Reveal>
         </div>
       </section>
 

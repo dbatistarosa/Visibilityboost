@@ -53,6 +53,20 @@ const SERVICES = [
     ],
     cta: 'Learn about Website Design →',
   },
+  {
+    icon: '🤖',
+    title: 'AI Automations',
+    href: '/services/ai-automations',
+    desc: 'Custom AI systems that handle lead follow-up, appointment booking, review collection, and workflow automation — built once, working for you forever.',
+    highlights: [
+      '24/7 AI chatbot for lead capture',
+      'Automated lead follow-up sequences',
+      'Review collection automation',
+      'Appointment & booking systems',
+      'Custom pricing per project ($997–$4,997)',
+    ],
+    cta: 'Learn about AI Automations →',
+  },
 ]
 
 export default function ServicesPage() {
@@ -113,7 +127,7 @@ export default function ServicesPage() {
                 lineHeight: 1.7,
               }}
             >
-              Three services, one agency, one monthly price. No juggling vendors. No surprise bills.
+              Four services, one agency. No juggling vendors. No surprise bills.
               No tech headaches.
             </p>
           </Reveal>

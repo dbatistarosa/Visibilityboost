@@ -10,6 +10,18 @@ export const metadata: Metadata = {
   description:
     'We create, schedule, and post professional content on Facebook, Instagram, and Google Posts every month — so your local business stays visible and trusted on social media.',
   alternates: { canonical: '/services/social-media' },
+  openGraph: {
+    title: 'Social Media Management for Local Businesses | VisibilityBoost',
+    description: 'Professional Facebook, Instagram & Google Posts content created, scheduled, and published every month. 8–24 posts/month for local service businesses from $399/mo.',
+    url: 'https://www.visibilityboostweb.com/services/social-media',
+    siteName: 'VisibilityBoost',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Social Media Management for Local Businesses | VisibilityBoost',
+    description: 'Professional Facebook, Instagram & Google Posts content created, scheduled, and published every month. 8–24 posts/month for local service businesses from $399/mo.',
+  },
 }
 
 const WHAT_WE_CREATE = [
@@ -144,9 +156,42 @@ const FAQS: [string, string][] = [
   ],
 ]
 
+const BASE_URL = 'https://www.visibilityboostweb.com'
+
+const pageJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': `${BASE_URL}/` },
+        { '@type': 'ListItem', 'position': 2, 'name': 'Services', 'item': `${BASE_URL}/services/` },
+        { '@type': 'ListItem', 'position': 3, 'name': 'Social Media Management', 'item': `${BASE_URL}/services/social-media/` },
+      ],
+    },
+    {
+      '@type': 'Service',
+      'name': 'Social Media Management for Local Businesses',
+      'serviceType': 'Social Media Management',
+      'description': 'Professional social media content created, scheduled, and published on Facebook, Instagram, and Google Posts every month for local service businesses.',
+      'provider': { '@id': `${BASE_URL}/#business` },
+      'areaServed': { '@type': 'Country', 'name': 'United States' },
+      'offers': [
+        { '@type': 'Offer', 'name': 'Starter Social Media', 'priceSpecification': { '@type': 'UnitPriceSpecification', 'price': '399', 'priceCurrency': 'USD', 'unitCode': 'MON' } },
+        { '@type': 'Offer', 'name': 'Growth Social Media', 'priceSpecification': { '@type': 'UnitPriceSpecification', 'price': '799', 'priceCurrency': 'USD', 'unitCode': 'MON' } },
+        { '@type': 'Offer', 'name': 'Premium Social Media', 'priceSpecification': { '@type': 'UnitPriceSpecification', 'price': '1499', 'priceCurrency': 'USD', 'unitCode': 'MON' } },
+      ],
+    },
+  ],
+}
+
 export default function SocialMediaPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+      />
       <Navbar />
 
       {/* Hero */}
@@ -456,6 +501,50 @@ export default function SocialMediaPage() {
           <Reveal delay={0.1}>
             <FaqAccordion faqs={FAQS} />
           </Reveal>
+        </div>
+      </section>
+
+      {/* Related Services */}
+      <section className="py-20" style={{ background: '#f8f8f6' }}>
+        <div className="container mx-auto px-6 md:px-12">
+          <Reveal className="text-center mb-12">
+            <p className="text-[11px] font-semibold tracking-[3px] uppercase mb-3" style={{ color: '#c8a44a' }}>
+              Related Services
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 'clamp(28px,3.5vw,40px)',
+                fontWeight: 600,
+                color: '#080f1e',
+                letterSpacing: '-1px',
+              }}
+            >
+              Pair Social Media with more services
+            </h2>
+          </Reveal>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: '🗺️', title: 'Local SEO', href: '/services/local-seo', desc: 'Get found on Google first — then let your social media close the trust gap.' },
+              { icon: '🌐', title: 'Website Design', href: '/services/website-design', desc: 'Give your social followers somewhere professional to land when they click.' },
+              { icon: '🤖', title: 'AI Automations', href: '/services/ai-automations', desc: 'Automatically follow up with every lead that comes from your social posts.' },
+            ].map((s, i) => (
+              <Reveal key={i} delay={i * 0.1}>
+                <a
+                  href={s.href}
+                  className="block p-7 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
+                  style={{ background: '#fff', borderColor: '#e9eaee' }}
+                >
+                  <div className="text-2xl mb-3">{s.icon}</div>
+                  <h3 className="mb-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 19, fontWeight: 600, color: '#080f1e' }}>
+                    {s.title}
+                  </h3>
+                  <p className="text-[13px] mb-4 leading-relaxed" style={{ color: '#717d96' }}>{s.desc}</p>
+                  <span className="text-[13px] font-bold" style={{ color: '#c8a44a' }}>Learn more →</span>
+                </a>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

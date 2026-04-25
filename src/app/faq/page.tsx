@@ -9,7 +9,21 @@ export const metadata: Metadata = {
   description:
     'Answers to the most common questions about local SEO, social media management, pricing, contracts, and how VisibilityBoost works.',
   alternates: { canonical: '/faq' },
+  openGraph: {
+    title: 'FAQ | Local SEO & Digital Marketing Questions Answered | VisibilityBoost',
+    description: 'Every question we\'ve been asked about local SEO, social media management, pricing, contracts, and results — answered honestly. No spin.',
+    url: 'https://www.visibilityboostweb.com/faq',
+    siteName: 'VisibilityBoost',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FAQ | Local SEO & Digital Marketing Questions Answered | VisibilityBoost',
+    description: 'Every question we\'ve been asked about local SEO, social media management, pricing, contracts, and results — answered honestly. No spin.',
+  },
 }
+
+const BASE_URL = 'https://www.visibilityboostweb.com'
 
 const CATEGORIES = [
   {
@@ -106,9 +120,25 @@ const CATEGORIES = [
   },
 ]
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  'mainEntity': CATEGORIES.flatMap(cat =>
+    cat.faqs.map(([q, a]) => ({
+      '@type': 'Question',
+      'name': q,
+      'acceptedAnswer': { '@type': 'Answer', 'text': a },
+    }))
+  ),
+}
+
 export default function FAQPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <Navbar />
 
       {/* Hero */}

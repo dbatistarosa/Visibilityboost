@@ -8,6 +8,18 @@ export const metadata: Metadata = {
   description:
     'Real results from real local businesses. See how VisibilityBoost helped HVAC companies, law firms, cleaning services and more grow their Google presence and inbound calls.',
   alternates: { canonical: '/results' },
+  openGraph: {
+    title: 'Client Results | Real Local Business Growth | VisibilityBoost',
+    description: '+312% average Google Business Profile views. +180% inbound calls. Real case studies from HVAC companies, law firms, cleaning services, and more.',
+    url: 'https://www.visibilityboostweb.com/results',
+    siteName: 'VisibilityBoost',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Client Results | Real Local Business Growth | VisibilityBoost',
+    description: '+312% average Google Business Profile views. +180% inbound calls. Real case studies from HVAC companies, law firms, cleaning services, and more.',
+  },
 }
 
 const STATS = [

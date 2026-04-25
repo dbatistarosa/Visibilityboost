@@ -9,6 +9,18 @@ export const metadata: Metadata = {
   description:
     'Custom AI automations built for your local business — chatbots, lead follow-up, appointment booking, review collection, and workflow automation. Custom pricing per project.',
   alternates: { canonical: '/services/ai-automations' },
+  openGraph: {
+    title: 'AI Automations for Local Businesses | VisibilityBoost',
+    description: 'Custom AI systems for lead follow-up, appointment booking, review collection, and workflow automation. Built once, works forever. Projects from $997–$4,997.',
+    url: 'https://www.visibilityboostweb.com/services/ai-automations',
+    siteName: 'VisibilityBoost',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI Automations for Local Businesses | VisibilityBoost',
+    description: 'Custom AI systems for lead follow-up, appointment booking, review collection, and workflow automation. Built once, works forever. Projects from $997–$4,997.',
+  },
 }
 
 const USE_CASES = [
@@ -96,9 +108,42 @@ const FAQS: [string, string][] = [
   ],
 ]
 
+const BASE_URL = 'https://www.visibilityboostweb.com'
+
+const pageJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': `${BASE_URL}/` },
+        { '@type': 'ListItem', 'position': 2, 'name': 'Services', 'item': `${BASE_URL}/services/` },
+        { '@type': 'ListItem', 'position': 3, 'name': 'AI Automations', 'item': `${BASE_URL}/services/ai-automations/` },
+      ],
+    },
+    {
+      '@type': 'Service',
+      'name': 'AI Automations for Local Businesses',
+      'serviceType': 'AI Automation',
+      'description': 'Custom AI automation systems for local businesses — lead follow-up, appointment booking, review collection, chatbots, and workflow automation. Projects priced from $997 to $4,997.',
+      'provider': { '@id': `${BASE_URL}/#business` },
+      'areaServed': { '@type': 'Country', 'name': 'United States' },
+      'offers': [
+        { '@type': 'Offer', 'name': 'Simple Automation', 'price': '997', 'priceCurrency': 'USD' },
+        { '@type': 'Offer', 'name': 'Multi-Step System', 'price': '2497', 'priceCurrency': 'USD' },
+        { '@type': 'Offer', 'name': 'Full AI Stack', 'price': '4997', 'priceCurrency': 'USD' },
+      ],
+    },
+  ],
+}
+
 export default function AiAutomationsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+      />
       <Navbar />
 
       {/* Hero */}
@@ -464,6 +509,50 @@ export default function AiAutomationsPage() {
           <Reveal delay={0.1}>
             <FaqAccordion faqs={FAQS} />
           </Reveal>
+        </div>
+      </section>
+
+      {/* Related Services */}
+      <section className="py-20" style={{ background: '#f8f8f6' }}>
+        <div className="container mx-auto px-6 md:px-12">
+          <Reveal className="text-center mb-12">
+            <p className="text-[11px] font-semibold tracking-[3px] uppercase mb-3" style={{ color: '#c8a44a' }}>
+              Related Services
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 'clamp(28px,3.5vw,40px)',
+                fontWeight: 600,
+                color: '#080f1e',
+                letterSpacing: '-1px',
+              }}
+            >
+              Pair AI Automations with more services
+            </h2>
+          </Reveal>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: '🗺️', title: 'Local SEO', href: '/services/local-seo', desc: 'Drive more leads to automate — rank higher on Google and fill your pipeline.' },
+              { icon: '📱', title: 'Social Media Management', href: '/services/social-media', desc: 'Combine consistent social content with automated follow-up for maximum impact.' },
+              { icon: '🌐', title: 'Website Design', href: '/services/website-design', desc: 'A fast, conversion-ready website is the best place to deploy your AI chatbot.' },
+            ].map((s, i) => (
+              <Reveal key={i} delay={i * 0.1}>
+                <a
+                  href={s.href}
+                  className="block p-7 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
+                  style={{ background: '#fff', borderColor: '#e9eaee' }}
+                >
+                  <div className="text-2xl mb-3">{s.icon}</div>
+                  <h3 className="mb-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 19, fontWeight: 600, color: '#080f1e' }}>
+                    {s.title}
+                  </h3>
+                  <p className="text-[13px] mb-4 leading-relaxed" style={{ color: '#717d96' }}>{s.desc}</p>
+                  <span className="text-[13px] font-bold" style={{ color: '#c8a44a' }}>Learn more →</span>
+                </a>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

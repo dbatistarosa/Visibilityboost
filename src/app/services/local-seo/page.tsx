@@ -10,6 +10,18 @@ export const metadata: Metadata = {
   description:
     'We get your local business to the top of Google. Full Google Business Profile optimization, citation building, review management, and local SEO — done for you every month.',
   alternates: { canonical: '/services/local-seo' },
+  openGraph: {
+    title: 'Local SEO & Google Business Profile Management | VisibilityBoost',
+    description: 'Get your local business to the top of Google. GBP optimization, citation building (50+ directories), review management, and on-page SEO — done for you every month.',
+    url: 'https://www.visibilityboostweb.com/services/local-seo',
+    siteName: 'VisibilityBoost',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Local SEO & Google Business Profile Management | VisibilityBoost',
+    description: 'Get your local business to the top of Google. GBP optimization, citation building (50+ directories), review management, and on-page SEO — done for you every month.',
+  },
 }
 
 const INCLUDED = [
@@ -159,9 +171,42 @@ const FAQS: [string, string][] = [
   ],
 ]
 
+const BASE_URL = 'https://www.visibilityboostweb.com'
+
+const pageJsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': `${BASE_URL}/` },
+        { '@type': 'ListItem', 'position': 2, 'name': 'Services', 'item': `${BASE_URL}/services/` },
+        { '@type': 'ListItem', 'position': 3, 'name': 'Local SEO', 'item': `${BASE_URL}/services/local-seo/` },
+      ],
+    },
+    {
+      '@type': 'Service',
+      'name': 'Local SEO & Google Business Profile Management',
+      'serviceType': 'Local SEO',
+      'description': 'Full local SEO management including Google Business Profile optimization, citation building across 50+ directories, review management, local keyword research, and on-page SEO for local businesses across the United States.',
+      'provider': { '@id': `${BASE_URL}/#business` },
+      'areaServed': { '@type': 'Country', 'name': 'United States' },
+      'offers': [
+        { '@type': 'Offer', 'name': 'Essential Local SEO', 'priceSpecification': { '@type': 'UnitPriceSpecification', 'price': '397', 'priceCurrency': 'USD', 'unitCode': 'MON' } },
+        { '@type': 'Offer', 'name': 'Professional Local SEO', 'priceSpecification': { '@type': 'UnitPriceSpecification', 'price': '697', 'priceCurrency': 'USD', 'unitCode': 'MON' } },
+        { '@type': 'Offer', 'name': 'Authority Local SEO', 'priceSpecification': { '@type': 'UnitPriceSpecification', 'price': '1197', 'priceCurrency': 'USD', 'unitCode': 'MON' } },
+      ],
+    },
+  ],
+}
+
 export default function LocalSEOPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+      />
       <Navbar />
 
       {/* Hero */}
@@ -478,6 +523,50 @@ export default function LocalSEOPage() {
           <Reveal delay={0.1}>
             <FaqAccordion faqs={FAQS} />
           </Reveal>
+        </div>
+      </section>
+
+      {/* Related Services */}
+      <section className="py-20" style={{ background: '#fff' }}>
+        <div className="container mx-auto px-6 md:px-12">
+          <Reveal className="text-center mb-12">
+            <p className="text-[11px] font-semibold tracking-[3px] uppercase mb-3" style={{ color: '#c8a44a' }}>
+              Related Services
+            </p>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: 'clamp(28px,3.5vw,40px)',
+                fontWeight: 600,
+                color: '#080f1e',
+                letterSpacing: '-1px',
+              }}
+            >
+              Pair Local SEO with more services
+            </h2>
+          </Reveal>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: '📱', title: 'Social Media Management', href: '/services/social-media', desc: 'Keep your social presence active so customers trust you before they call.' },
+              { icon: '🌐', title: 'Website Design', href: '/services/website-design', desc: 'Turn your Google traffic into booked customers with a conversion-ready website.' },
+              { icon: '🤖', title: 'AI Automations', href: '/services/ai-automations', desc: 'Automate lead follow-up and review collection so no opportunity slips through.' },
+            ].map((s, i) => (
+              <Reveal key={i} delay={i * 0.1}>
+                <a
+                  href={s.href}
+                  className="block p-7 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg group"
+                  style={{ background: '#f8f8f6', borderColor: '#e9eaee' }}
+                >
+                  <div className="text-2xl mb-3">{s.icon}</div>
+                  <h3 className="mb-2" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 19, fontWeight: 600, color: '#080f1e' }}>
+                    {s.title}
+                  </h3>
+                  <p className="text-[13px] mb-4 leading-relaxed" style={{ color: '#717d96' }}>{s.desc}</p>
+                  <span className="text-[13px] font-bold" style={{ color: '#c8a44a' }}>Learn more →</span>
+                </a>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

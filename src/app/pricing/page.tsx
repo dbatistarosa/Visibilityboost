@@ -10,6 +10,18 @@ export const metadata: Metadata = {
   description:
     'Transparent, service-specific pricing for local businesses. Local SEO from $397/mo, Social Media from $399/mo, Website Maintenance from $199/mo. Annual plans include a free website.',
   alternates: { canonical: '/pricing' },
+  openGraph: {
+    title: 'Honest Pricing | Local SEO, Social Media & Website Design | VisibilityBoost',
+    description: 'Transparent, per-service pricing for local businesses. Local SEO from $397/mo, Social Media from $399/mo. Annual plans include a free professional website.',
+    url: 'https://www.visibilityboostweb.com/pricing',
+    siteName: 'VisibilityBoost',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Honest Pricing | Local SEO, Social Media & Website Design | VisibilityBoost',
+    description: 'Transparent, per-service pricing for local businesses. Local SEO from $397/mo, Social Media from $399/mo. Annual plans include a free professional website.',
+  },
 }
 
 const LOCAL_SEO_PLANS: PricingPlan[] = [

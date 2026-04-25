@@ -8,6 +8,18 @@ export const metadata: Metadata = {
   description:
     'Local SEO, social media management, and website design for small businesses. Everything you need to dominate your local market — starting at $297/month.',
   alternates: { canonical: '/services' },
+  openGraph: {
+    title: 'All Services | Local SEO, Social Media & Website Design | VisibilityBoost',
+    description: 'Local SEO, social media management, website design, and AI automations for small businesses. One agency. Four services. No long-term contracts.',
+    url: 'https://www.visibilityboostweb.com/services',
+    siteName: 'VisibilityBoost',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'All Services | Local SEO, Social Media & Website Design | VisibilityBoost',
+    description: 'Local SEO, social media management, website design, and AI automations for small businesses. One agency. Four services. No long-term contracts.',
+  },
 }
 
 const SERVICES = [

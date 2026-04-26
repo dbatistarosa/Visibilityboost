@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
 
+User-agent: Googlebot
+Allow: /
+
 Sitemap: https://visibilityboost.com/sitemap.xml
+
+# Block admin/API routes
+Disallow: /api/
+Disallow: /_next/

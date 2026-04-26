@@ -1,10 +1,73 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { motion, useInView, AnimatePresence, animate as motionAnimate } from 'framer-motion'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Reveal } from '@/components/Reveal'
 import { ScrollTop } from '@/components/ScrollTop'
+
+const spring = { type: 'spring' as const, stiffness: 350, damping: 28 }
+const ease: [number, number, number, number] = [0.22, 1, 0.36, 1]
+
+function FloatingOrb({ size, color, style, duration = 7, delay = 0 }: {
+  size: number; color: string; style?: React.CSSProperties; duration?: number; delay?: number
+}) {
+  return (
+    <motion.div
+      className="absolute pointer-events-none rounded-full"
+      style={{ width: size, height: size, background: color, filter: 'blur(80px)', ...style }}
+      animate={{ y: [0, -28, 0], x: [0, 14, 0], scale: [1, 1.08, 1] }}
+      transition={{ duration, repeat: Infinity, ease: 'easeInOut', delay, repeatType: 'reverse' }}
+    />
+  )
+}
+
+function AnimatedCounter({ target, prefix = '', suffix = '', inView }: {
+  target: number; prefix?: string; suffix?: string; inView: boolean
+}) {
+  const [val, setVal] = useState(0)
+  useEffect(() => {
+    if (!inView) return
+    const ctrl = motionAnimate(0, target, {
+      duration: 2.2, ease: 'easeOut',
+      onUpdate: (v) => setVal(Math.round(v)),
+    })
+    return ctrl.stop
+  }, [inView, target])
+  return <>{prefix}{val.toLocaleString()}{suffix}</>
+}
+
+function ResultCard({ c, i }: { c: { biz: string; big: string; what: string; pct: number; quote: string }; i: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-5%' })
+  return (
+    <Reveal delay={i * 0.15}>
+      <motion.div ref={ref} className="rounded-2xl p-8 border"
+        style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.06)' }}
+        whileHover={{ y: -8, borderColor: 'rgba(200,164,74,0.2)', boxShadow: '0 24px 48px rgba(0,0,0,0.4)' }}
+        transition={spring}
+      >
+        <div className="text-[11px] font-bold tracking-[2px] uppercase mb-5 flex items-center gap-2.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <span className="w-7 h-7 rounded-full inline-block" style={{ background: 'rgba(200,164,74,0.15)' }} />
+          {c.biz}
+        </div>
+        <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 52, fontWeight: 700, color: '#c8a44a', lineHeight: 1, marginBottom: 6 }}>{c.big}</div>
+        <div className="text-[13px] mb-4" style={{ color: 'rgba(255,255,255,0.4)' }}>{c.what}</div>
+        <div className="rounded h-1 overflow-hidden mb-2" style={{ background: 'rgba(255,255,255,0.06)' }}>
+          <motion.div className="h-full rounded" style={{ background: 'linear-gradient(90deg, #c8a44a, #debb71)' }}
+            initial={{ width: 0 }}
+            animate={inView ? { width: `${c.pct}%` } : {}}
+            transition={{ duration: 1.5, ease, delay: 0.4 }}
+          />
+        </div>
+        <div className="flex justify-between text-[11px] mb-4" style={{ color: 'rgba(255,255,255,0.25)' }}><span>Before</span><span>After</span></div>
+        <div className="text-[13px] italic leading-relaxed pt-4 border-t" style={{ color: 'rgba(255,255,255,0.5)', borderColor: 'rgba(255,255,255,0.06)' }}>{c.quote}</div>
+        <div className="mt-2 text-[12px]" style={{ color: '#c8a44a' }}>★★★★★</div>
+      </motion.div>
+    </Reveal>
+  )
+}
 
 /* ── Ticker ── */
 function Ticker() {
@@ -26,27 +89,33 @@ function Ticker() {
 
 /* ── Hero ── */
 function Hero() {
+  const heroContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } } }
+  const heroItem = { hidden: { opacity: 0, y: 32 }, visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease } } }
+
   return (
     <section id="hero" className="min-h-screen flex items-center relative overflow-hidden pt-20 pb-16" style={{ background: '#03080f' }}>
       {/* Grid */}
       <div className="absolute inset-0 hero-grid-bg pointer-events-none" />
       {/* Glows */}
-      <div className="absolute pointer-events-none" style={{ width: 700, height: 700, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,164,74,0.1) 0%, transparent 65%)', top: -200, right: -200 }} />
-      <div className="absolute pointer-events-none" style={{ width: 450, height: 450, borderRadius: '50%', background: 'radial-gradient(circle, rgba(26,47,88,0.5) 0%, transparent 70%)', bottom: -100, left: -100 }} />
+      <FloatingOrb size={700} color="radial-gradient(circle, rgba(200,164,74,0.11) 0%, transparent 65%)" style={{ top: -250, right: -200 }} duration={8} />
+      <FloatingOrb size={500} color="radial-gradient(circle, rgba(26,47,88,0.55) 0%, transparent 70%)" style={{ bottom: -120, left: -120 }} duration={10} delay={1.5} />
+      <FloatingOrb size={320} color="radial-gradient(circle, rgba(200,164,74,0.06) 0%, transparent 60%)" style={{ top: '35%', left: '32%' }} duration={12} delay={3} />
 
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="grid md:grid-cols-[1fr_400px] gap-16 lg:gap-20 items-center">
 
           {/* Left */}
-          <div>
-            <div className="inline-flex items-center gap-2.5 mb-7 animate-fadeUp">
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#c8a44a', animation: 'pulse-gold 2s infinite' }} />
+          <motion.div variants={heroContainer} initial="hidden" animate="visible">
+            <motion.div variants={heroItem} className="inline-flex items-center gap-2.5 mb-7">
+              <motion.span style={{ width: 6, height: 6, borderRadius: '50%', background: '#c8a44a', display: 'inline-block' }}
+                animate={{ boxShadow: ['0 0 0 0 rgba(200,164,74,0)', '0 0 0 10px rgba(200,164,74,0.15)', '0 0 0 0 rgba(200,164,74,0)'] }}
+                transition={{ duration: 2, repeat: Infinity }} />
               <span className="text-[11px] font-semibold tracking-[3px] uppercase" style={{ color: '#c8a44a' }}>
                 Local SEO · Social Media · Web Design
               </span>
-            </div>
+            </motion.div>
 
-            <h1 className="animate-fadeUp delay-2 mb-7" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 'clamp(48px,6vw,76px)', fontWeight: 700, color: '#fff', lineHeight: 1.0, letterSpacing: '-2px' }}>
+            <motion.h1 variants={heroItem} className="mb-7" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 'clamp(48px,6vw,76px)', fontWeight: 700, color: '#fff', lineHeight: 1.0, letterSpacing: '-2px' }}>
               We make your<br />
               business{' '}
               <span className="relative inline-block" style={{ color: '#c8a44a' }}>
@@ -55,34 +124,40 @@ function Hero() {
               </span>
               <br />
               to <em>ignore.</em>
-            </h1>
+            </motion.h1>
 
-            <p className="animate-fadeUp delay-3 mb-11" style={{ fontSize: 17, fontWeight: 300, color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, maxWidth: 520 }}>
+            <motion.p variants={heroItem} className="mb-11" style={{ fontSize: 17, fontWeight: 300, color: 'rgba(255,255,255,0.55)', lineHeight: 1.75, maxWidth: 520 }}>
               When someone in your city searches for your service,{' '}
               <strong style={{ color: 'rgba(255,255,255,0.85)', fontWeight: 500 }}>they should find you first.</strong>{' '}
               We handle the Google stuff, the social media, and the website —
               so you can focus on running your business.
-            </p>
+            </motion.p>
 
-            <div className="animate-fadeUp delay-4 flex gap-3 flex-wrap mb-10">
-              <a
+            <motion.div variants={heroItem} className="flex gap-3 flex-wrap mb-10">
+              <motion.a
                 href="#booking"
-                className="inline-flex items-center gap-2 text-[14px] font-bold px-8 py-4 rounded-lg transition-all duration-200 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 text-[14px] font-bold px-8 py-4 rounded-lg"
                 style={{ background: '#c8a44a', color: '#080f1e', boxShadow: '0 4px 16px rgba(200,164,74,0.2)' }}
+                whileHover={{ y: -3, scale: 1.03, boxShadow: '0 10px 32px rgba(200,164,74,0.4)' }}
+                whileTap={{ scale: 0.97 }}
+                transition={spring}
               >
                 Book Free Audit
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M7 1l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </a>
-              <a
+              </motion.a>
+              <motion.a
                 href="#packages"
-                className="inline-flex items-center gap-2 text-[14px] font-medium px-6 py-4 rounded-lg transition-all duration-200 hover:text-white border"
+                className="inline-flex items-center gap-2 text-[14px] font-medium px-6 py-4 rounded-lg border"
                 style={{ color: 'rgba(255,255,255,0.7)', borderColor: 'rgba(255,255,255,0.12)', background: 'transparent' }}
+                whileHover={{ y: -3, borderColor: 'rgba(255,255,255,0.35)' }}
+                whileTap={{ scale: 0.97 }}
+                transition={spring}
               >
                 See Packages
-              </a>
-            </div>
+              </motion.a>
+            </motion.div>
 
-            <div className="animate-fadeUp delay-5 flex items-center gap-4 flex-wrap">
+            <motion.div variants={heroItem} className="flex items-center gap-4 flex-wrap">
               <div>
                 <div style={{ color: '#c8a44a', fontSize: 16, lineHeight: 1 }}>★★★★★</div>
                 <div className="text-[13px] mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>Trusted by <strong style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>local businesses</strong></div>
@@ -91,12 +166,12 @@ function Hero() {
               <div className="text-[13px]" style={{ color: 'rgba(255,255,255,0.4)' }}><strong style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>No contracts.</strong> Cancel anytime.</div>
               <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.12)' }} />
               <div className="text-[13px]" style={{ color: 'rgba(255,255,255,0.4)' }}>Results in <strong style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>30–60 days</strong></div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Right — Results Card */}
-          <div className="hidden md:block animate-fadeUp delay-5">
-            <div className="rounded-2xl p-8 border" style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)' }}>
+          <motion.div className="hidden md:block" initial={{ opacity: 0, y: 60, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 1, ease, delay: 0.6 }}>
+            <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', repeatType: 'reverse' }} className="rounded-2xl p-8 border" style={{ background: 'rgba(255,255,255,0.04)', borderColor: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)' }}>
               <div className="text-[11px] font-bold tracking-[2px] uppercase mb-6" style={{ color: '#c8a44a' }}>
                 📊 Live Client Results — This Month
               </div>
@@ -124,8 +199,8 @@ function Hero() {
                   <div className="h-full rounded progress-bar" style={{ width: '82%', background: 'linear-gradient(90deg, #c8a44a, #debb71)' }} />
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -157,10 +232,18 @@ function Problem() {
             </p>
             <ul className="mt-7 list-none">
               {pains.map((p, i) => (
-                <li key={i} className="flex gap-3.5 py-3.5 border-b last:border-0" style={{ borderColor: '#e9eaee' }}>
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease, delay: i * 0.1 }}
+                  className="flex gap-3.5 py-3.5 border-b last:border-0"
+                  style={{ borderColor: '#e9eaee' }}
+                >
                   <div className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[11px] font-black flex-shrink-0 mt-0.5" style={{ background: 'rgba(220,38,38,0.08)', color: '#dc2626' }}>✕</div>
                   <div className="text-[14px] leading-relaxed" style={{ color: '#717d96' }} dangerouslySetInnerHTML={{ __html: p.replace(/(.+?)(—)(.+)/, '<strong style="color:#080f1e;font-weight:500">$1</strong>$2$3') }} />
-                </li>
+                </motion.li>
               ))}
             </ul>
           </Reveal>
@@ -196,24 +279,25 @@ function Problem() {
     </section>
   )
 }
-
 /* ── Stats ── */
 function Stats() {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-10%' })
   const stats = [
-    { num: '97', suffix: '%', label: 'of people search\nGoogle before calling' },
-    { num: '+312', suffix: '%', label: 'avg increase in\nGoogle profile views' },
-    { num: '47', suffix: '', label: 'days to first\nmeasurable results' },
-    { num: '$0', suffix: '', label: 'you do — we handle\neverything for you' },
+    { num: 97, prefix: '', suffix: '%', label: 'of people search\nGoogle before calling' },
+    { num: 312, prefix: '+', suffix: '%', label: 'avg increase in\nGoogle profile views' },
+    { num: 47, prefix: '', suffix: '', label: 'days to first\nmeasurable results' },
+    { num: 0, prefix: '$', suffix: '', label: 'you do — we handle\neverything for you' },
   ]
   return (
-    <section style={{ background: '#080f1e', padding: '80px 0' }}>
+    <section ref={ref} style={{ background: '#080f1e', padding: '80px 0' }}>
       <div className="container mx-auto px-6 md:px-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-0">
           {stats.map((s, i) => (
             <Reveal key={i} delay={i * 0.1}>
               <div className="py-10 px-8 text-center border-r last:border-r-0 border-b md:border-b-0" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
                 <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 56, fontWeight: 700, color: '#c8a44a', lineHeight: 1, marginBottom: 8 }}>
-                  {s.num}{s.suffix}
+                  <AnimatedCounter target={s.num} prefix={s.prefix} suffix={s.suffix} inView={inView} />
                 </div>
                 <div className="text-[13px] font-light leading-relaxed whitespace-pre-line" style={{ color: 'rgba(255,255,255,0.4)' }}>{s.label}</div>
               </div>
@@ -248,14 +332,20 @@ function HowItWorks() {
           <div className="hidden md:block absolute h-px" style={{ top: 48, left: '20%', right: '20%', background: 'linear-gradient(90deg, transparent, #c8a44a, transparent)' }} />
           {steps.map((s, i) => (
             <Reveal key={i} delay={i * 0.15}>
-              <div className="text-center p-10 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-[#c8a44a] group" style={{ borderColor: '#e9eaee' }}>
+              <motion.div
+                className="text-center p-10 rounded-2xl border cursor-default"
+                style={{ borderColor: '#e9eaee' }}
+                whileHover={{ y: -10, borderColor: '#c8a44a', boxShadow: '0 24px 48px rgba(200,164,74,0.1)' }}
+                whileTap={{ scale: 0.98 }}
+                transition={spring}
+              >
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 relative border" style={{ background: '#faf5e6', borderColor: 'rgba(200,164,74,0.2)' }}>
                   <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 32, fontWeight: 700, color: '#c8a44a' }}>{s.n}</span>
                   <span className="absolute -top-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center text-lg shadow" style={{ background: '#fff' }}>{s.emoji}</span>
                 </div>
                 <h3 className="mb-3" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: '#080f1e' }}>{s.title}</h3>
                 <p style={{ fontSize: 14, color: '#717d96', lineHeight: 1.7 }}>{s.body}</p>
-              </div>
+              </motion.div>
             </Reveal>
           ))}
         </div>
@@ -278,7 +368,12 @@ function Services() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Featured */}
           <Reveal className="md:col-span-2">
-            <div className="rounded-2xl p-9 border grid md:grid-cols-[1fr_auto] gap-8 items-start group hover:-translate-y-1 transition-all duration-300" style={{ background: 'rgba(200,164,74,0.05)', borderColor: 'rgba(200,164,74,0.15)' }}>
+            <motion.div
+              className="rounded-2xl p-9 border grid md:grid-cols-[1fr_auto] gap-8 items-start"
+              style={{ background: 'rgba(200,164,74,0.05)', borderColor: 'rgba(200,164,74,0.15)' }}
+              initial="rest" whileHover="hover" animate="rest"
+              variants={{ rest: { y: 0 }, hover: { y: -8, borderColor: 'rgba(200,164,74,0.35)', boxShadow: '0 24px 48px rgba(200,164,74,0.08)', transition: spring } }}
+            >
               <div>
                 <div className="w-13 h-13 rounded-xl flex items-center justify-center text-2xl mb-5" style={{ background: 'rgba(200,164,74,0.1)', width: 52, height: 52 }}>🗺️</div>
                 <h3 className="mb-2.5" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: '#fff' }}>Local SEO & Google Domination</h3>
@@ -295,7 +390,7 @@ function Services() {
                 <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 72, fontWeight: 700, color: 'rgba(200,164,74,0.12)', lineHeight: 1 }}>#1</div>
                 <div className="text-[12px] mt-1.5" style={{ color: 'rgba(255,255,255,0.25)' }}>our goal<br />for you</div>
               </div>
-            </div>
+            </motion.div>
           </Reveal>
 
           {[
@@ -303,8 +398,17 @@ function Services() {
             { icon: '🌐', title: 'Website Design', desc: 'A fast, beautiful, mobile-first website built to convert visitors into calls. Included free with any annual plan — no catch.', items: ['5-page professional website','Mobile-first, fast-loading design','Contact form + click-to-call','SEO-optimized from day one','You own it completely, forever'] },
           ].map((s, i) => (
             <Reveal key={i} delay={i * 0.15}>
-              <div className="rounded-2xl p-9 border hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                <div className="absolute bottom-0 left-0 h-0.5 group-hover:w-full w-0 transition-all duration-500" style={{ background: 'linear-gradient(90deg, #c8a44a, transparent)' }} />
+              <motion.div
+                className="rounded-2xl p-9 border relative overflow-hidden"
+                style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.06)' }}
+                initial="rest" whileHover="hover" animate="rest"
+                variants={{ rest: { y: 0 }, hover: { y: -8, borderColor: 'rgba(200,164,74,0.2)', boxShadow: '0 24px 48px rgba(0,0,0,0.3)', transition: spring } }}
+              >
+                <motion.div
+                  className="absolute bottom-0 left-0 h-0.5"
+                  style={{ background: 'linear-gradient(90deg, #c8a44a, transparent)' }}
+                  variants={{ rest: { width: '0%' }, hover: { width: '100%', transition: { duration: 0.4, ease } } }}
+                />
                 <div className="w-13 h-13 rounded-xl flex items-center justify-center text-2xl mb-5" style={{ background: 'rgba(200,164,74,0.1)', width: 52, height: 52 }}>{s.icon}</div>
                 <h3 className="mb-2.5" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 22, fontWeight: 600, color: '#fff' }}>{s.title}</h3>
                 <p className="mb-4" style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7 }}>{s.desc}</p>
@@ -315,7 +419,7 @@ function Services() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </motion.div>
             </Reveal>
           ))}
         </div>
@@ -358,14 +462,16 @@ function Packages() {
         <div className="grid md:grid-cols-3 gap-6 items-start">
           {plans.map((p, i) => (
             <Reveal key={i} delay={i * 0.1}>
-              <div
-                className="rounded-2xl p-9 relative transition-all duration-300 hover:-translate-y-1 border"
+              <motion.div
+                className="rounded-2xl p-9 relative border"
                 style={{
                   background: p.popular ? '#080f1e' : '#fff',
                   borderColor: p.popular ? '#c8a44a' : '#e9eaee',
                   transform: p.popular ? 'translateY(-8px) scale(1.02)' : undefined,
                   boxShadow: p.popular ? '0 32px 64px rgba(8,15,30,0.2)' : undefined,
                 }}
+                whileHover={p.popular ? {} : { y: -8, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}
+                transition={spring}
               >
                 {p.popular && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[10px] font-black tracking-[2px] uppercase whitespace-nowrap" style={{ background: '#c8a44a', color: '#080f1e' }}>
@@ -395,17 +501,20 @@ function Packages() {
                     </li>
                   ))}
                 </ul>
-                <a
+                <motion.a
                   href="#booking"
-                  className="block w-full text-center py-3.5 rounded-xl font-bold text-[14px] tracking-wide transition-all duration-200 hover:-translate-y-0.5 border-2"
+                  className="block w-full text-center py-3.5 rounded-xl font-bold text-[14px] tracking-wide border-2"
                   style={p.popular
                     ? { background: '#c8a44a', color: '#080f1e', borderColor: '#c8a44a' }
                     : { background: 'transparent', color: '#080f1e', borderColor: '#e9eaee' }
                   }
+                  whileHover={{ y: -2, scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={spring}
                 >
                   {p.popular ? 'Start Growing →' : p.name === 'Starter' ? 'Get Started' : 'Become the Authority'}
-                </a>
-              </div>
+                </motion.a>
+              </motion.div>
             </Reveal>
           ))}
         </div>
@@ -418,7 +527,6 @@ function Packages() {
     </section>
   )
 }
-
 /* ── Results ── */
 function Results() {
   const cards = [
@@ -439,26 +547,7 @@ function Results() {
           </p>
         </Reveal>
         <div className="grid md:grid-cols-3 gap-5">
-          {cards.map((c, i) => (
-            <Reveal key={i} delay={i * 0.15}>
-              <div className="rounded-2xl p-8 border transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(200,164,74,0.2)]" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                <div className="text-[11px] font-bold tracking-[2px] uppercase mb-5 flex items-center gap-2.5" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                  <span className="w-7 h-7 rounded-full inline-block" style={{ background: 'rgba(200,164,74,0.15)' }} />
-                  {c.biz}
-                </div>
-                <div style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 52, fontWeight: 700, color: '#c8a44a', lineHeight: 1, marginBottom: 6 }}>{c.big}</div>
-                <div className="text-[13px] mb-4" style={{ color: 'rgba(255,255,255,0.4)' }}>{c.what}</div>
-                <div className="rounded h-1 overflow-hidden mb-2" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                  <div className="h-full rounded progress-bar" style={{ width: `${c.pct}%`, background: 'linear-gradient(90deg, #c8a44a, #debb71)' }} />
-                </div>
-                <div className="flex justify-between text-[11px] mb-4" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                  <span>Before</span><span>After</span>
-                </div>
-                <div className="text-[13px] italic leading-relaxed pt-4 border-t" style={{ color: 'rgba(255,255,255,0.5)', borderColor: 'rgba(255,255,255,0.06)' }}>{c.quote}</div>
-                <div className="mt-2 text-[12px]" style={{ color: '#c8a44a' }}>★★★★★</div>
-              </div>
-            </Reveal>
-          ))}
+          {cards.map((c, i) => <ResultCard key={i} c={c} i={i} />)}
         </div>
         <Reveal className="text-center mt-6">
           <p className="text-[13px]" style={{ color: 'rgba(255,255,255,0.2)' }}>Results vary by industry, location, and competition. We'll show you realistic expectations for your specific market on our free audit call.</p>
@@ -508,67 +597,88 @@ function Booking() {
                 'You\'ll leave with 3 things to fix even if you don\'t work with us',
                 'No pushy sales tactics — ever',
                 'We respond within 2 business hours',
-              ].map(p => (
-                <li key={p} className="flex items-center gap-3 py-3 border-b last:border-0 text-[14px]" style={{ borderColor: '#f5f6f8', color: '#080f1e' }}>
+              ].map((p, idx) => (
+                <motion.li
+                  key={p}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease, delay: idx * 0.08 }}
+                  className="flex items-center gap-3 py-3 border-b last:border-0 text-[14px]"
+                  style={{ borderColor: '#f5f6f8', color: '#080f1e' }}
+                >
                   <span className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black flex-shrink-0" style={{ background: 'rgba(26,138,80,0.08)', color: '#1a8a50' }}>✓</span>
                   {p}
-                </li>
+                </motion.li>
               ))}
             </ul>
           </Reveal>
 
           <Reveal delay={0.2}>
             <div className="rounded-2xl p-11 border" style={{ background: '#080f1e', borderColor: 'rgba(255,255,255,0.06)' }}>
-              {!submitted ? (
-                <>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Book Your Free Audit</h3>
-                  <p className="text-[13px] mb-8" style={{ color: 'rgba(255,255,255,0.35)' }}>We'll reply within 2 business hours with your audit link.</p>
-                  <div className="grid grid-cols-2 gap-3.5 mb-4.5">
-                    {[{id:'fname',label:'First Name',placeholder:'John'},{id:'lname',label:'Last Name',placeholder:'Smith'}].map(f => (
-                      <div key={f.id}>
-                        <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>{f.label} *</label>
-                        <input id={f.id} type="text" placeholder={f.placeholder} style={inputStyle(f.id)} />
+              <AnimatePresence mode="wait">
+                {!submitted ? (
+                  <motion.div key="form" initial={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
+                    <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Book Your Free Audit</h3>
+                    <p className="text-[13px] mb-8" style={{ color: 'rgba(255,255,255,0.35)' }}>We'll reply within 2 business hours with your audit link.</p>
+                    <div className="grid grid-cols-2 gap-3.5 mb-4.5">
+                      {[{id:'fname',label:'First Name',placeholder:'John'},{id:'lname',label:'Last Name',placeholder:'Smith'}].map(f => (
+                        <div key={f.id}>
+                          <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>{f.label} *</label>
+                          <input id={f.id} type="text" placeholder={f.placeholder} style={inputStyle(f.id)} />
+                        </div>
+                      ))}
+                    </div>
+                    {[
+                      {id:'email',label:'Business Email',placeholder:'john@yourbusiness.com',type:'email'},
+                      {id:'phone',label:'Phone Number',placeholder:'(555) 000-0000',type:'tel'},
+                      {id:'business',label:'Business Name',placeholder:'Smith Plumbing LLC',type:'text'},
+                    ].map(f => (
+                      <div key={f.id} style={{ marginBottom: 16 }}>
+                        <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>{f.label} {f.id !== 'phone' ? '*' : ''}</label>
+                        <input id={f.id} type={f.type} placeholder={f.placeholder} style={inputStyle(f.id)} />
                       </div>
                     ))}
-                  </div>
-                  {[
-                    {id:'email',label:'Business Email',placeholder:'john@yourbusiness.com',type:'email'},
-                    {id:'phone',label:'Phone Number',placeholder:'(555) 000-0000',type:'tel'},
-                    {id:'business',label:'Business Name',placeholder:'Smith Plumbing LLC',type:'text'},
-                  ].map(f => (
-                    <div key={f.id} style={{ marginBottom: 16 }}>
-                      <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>{f.label} {f.id !== 'phone' ? '*' : ''}</label>
-                      <input id={f.id} type={f.type} placeholder={f.placeholder} style={inputStyle(f.id)} />
+                    <div style={{ marginBottom: 16 }}>
+                      <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>Your Industry</label>
+                      <select style={{ ...inputStyle(''), cursor: 'pointer', color: 'rgba(255,255,255,0.7)' }}>
+                        <option value="">Select your business type...</option>
+                        {['Plumbing / HVAC / Electrical','Legal Services','Medical / Dental / Health','Cleaning Services','Landscaping / Lawn Care','Construction / Contracting','Accounting / Finance','Real Estate','Restaurant / Food','Retail / Shop','Other'].map(o => <option key={o}>{o}</option>)}
+                      </select>
                     </div>
-                  ))}
-                  <div style={{ marginBottom: 16 }}>
-                    <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>Your Industry</label>
-                    <select style={{ ...inputStyle(''), cursor: 'pointer', color: 'rgba(255,255,255,0.7)' }}>
-                      <option value="">Select your business type...</option>
-                      {['Plumbing / HVAC / Electrical','Legal Services','Medical / Dental / Health','Cleaning Services','Landscaping / Lawn Care','Construction / Contracting','Accounting / Finance','Real Estate','Restaurant / Food','Retail / Shop','Other'].map(o => <option key={o}>{o}</option>)}
-                    </select>
-                  </div>
-                  <div style={{ marginBottom: 20 }}>
-                    <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>Biggest Marketing Challenge</label>
-                    <textarea placeholder="e.g. We don't show up on Google, we have no reviews..." style={{ ...inputStyle(''), resize: 'vertical', minHeight: 80 }} />
-                  </div>
-                  <button
-                    onClick={handleSubmit}
-                    className="w-full py-4 rounded-xl font-extrabold text-[14px] tracking-wide flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5"
-                    style={{ background: '#c8a44a', color: '#080f1e' }}
-                  >
-                    Book My Free Audit
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </button>
-                  <p className="text-center text-[11px] mt-3" style={{ color: 'rgba(255,255,255,0.2)', lineHeight: 1.6 }}>🔒 We never share your information.</p>
-                </>
-              ) : (
-                <div className="text-center py-10">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-5" style={{ background: 'rgba(26,138,80,0.15)', color: '#4ade80' }}>✓</div>
-                  <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 28, color: '#fff', marginBottom: 12 }}>You're Booked!</h3>
-                  <p className="text-[14px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>We'll send your audit link within 2 business hours. Check your email — and your spam folder just in case.<br /><br /><strong style={{ color: 'rgba(255,255,255,0.6)' }}>While you wait:</strong> take a screenshot of your Google Business Profile. We'll look at it together on the call.</p>
-                </div>
-              )}
+                    <div style={{ marginBottom: 20 }}>
+                      <label className="block text-[11px] font-bold tracking-[1.5px] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>Biggest Marketing Challenge</label>
+                      <textarea placeholder="e.g. We don't show up on Google, we have no reviews..." style={{ ...inputStyle(''), resize: 'vertical', minHeight: 80 }} />
+                    </div>
+                    <motion.button
+                      onClick={handleSubmit}
+                      className="w-full py-4 rounded-xl font-extrabold text-[14px] tracking-wide flex items-center justify-center gap-2"
+                      style={{ background: '#c8a44a', color: '#080f1e' }}
+                      whileHover={{ y: -2, boxShadow: '0 8px 24px rgba(200,164,74,0.4)', scale: 1.01 }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={spring}
+                    >
+                      Book My Free Audit
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </motion.button>
+                    <p className="text-center text-[11px] mt-3" style={{ color: 'rgba(255,255,255,0.2)', lineHeight: 1.6 }}>🔒 We never share your information.</p>
+                  </motion.div>
+                ) : (
+                  <motion.div key="success" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease }}>
+                    <div className="text-center py-10">
+                      <motion.div
+                        className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-5"
+                        style={{ background: 'rgba(26,138,80,0.15)', color: '#4ade80' }}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 20, delay: 0.2 }}
+                      >✓</motion.div>
+                      <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 28, color: '#fff', marginBottom: 12 }}>You're Booked!</h3>
+                      <p className="text-[14px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.4)' }}>We'll send your audit link within 2 business hours. Check your email — and your spam folder just in case.<br /><br /><strong style={{ color: 'rgba(255,255,255,0.6)' }}>While you wait:</strong> take a screenshot of your Google Business Profile. We'll look at it together on the call.</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </Reveal>
         </div>
@@ -602,15 +712,35 @@ function FAQ() {
         <div className="grid md:grid-cols-2 gap-4">
           {faqs.map(([q, a], i) => (
             <Reveal key={i} delay={(i % 2) * 0.1}>
-              <div className="rounded-2xl overflow-hidden border transition-colors" style={{ background: '#fff', borderColor: open === i ? '#c8a44a' : '#e9eaee' }}>
+              <motion.div
+                className="rounded-2xl overflow-hidden border"
+                style={{ background: '#fff' }}
+                animate={{ borderColor: open === i ? '#c8a44a' : '#e9eaee' }}
+                transition={{ duration: 0.2 }}
+              >
                 <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex justify-between items-center px-6 py-5 text-left gap-4" style={{ background: 'none' }}>
                   <span className="font-medium text-[15px]" style={{ color: '#080f1e' }}>{q}</span>
-                  <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-[14px] transition-all duration-300" style={{ background: open === i ? '#faf5e6' : '#f5f6f8', color: open === i ? '#c8a44a' : '#a8aec0', transform: open === i ? 'rotate(45deg)' : 'none' }}>+</span>
+                  <motion.span
+                    className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-[14px]"
+                    style={{ background: open === i ? '#faf5e6' : '#f5f6f8', color: open === i ? '#c8a44a' : '#a8aec0' }}
+                    animate={{ rotate: open === i ? 45 : 0 }}
+                    transition={{ duration: 0.25, ease }}
+                  >+</motion.span>
                 </button>
-                <div style={{ maxHeight: open === i ? 400 : 0, overflow: 'hidden', transition: 'max-height 0.4s cubic-bezier(0.22,1,0.36,1)' }}>
-                  <p className="px-6 pb-5 pt-4 text-[14px] leading-relaxed border-t" style={{ color: '#717d96', borderColor: '#f5f6f8' }}>{a}</p>
-                </div>
-              </div>
+                <AnimatePresence initial={false}>
+                  {open === i && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.4, ease }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <p className="px-6 pb-5 pt-4 text-[14px] leading-relaxed border-t" style={{ color: '#717d96', borderColor: '#f5f6f8' }}>{a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             </Reveal>
           ))}
         </div>
@@ -623,12 +753,22 @@ function FAQ() {
 function FinalCTA() {
   return (
     <section className="py-28 text-center relative overflow-hidden" style={{ background: '#080f1e' }}>
-      <div className="absolute pointer-events-none" style={{ top: -200, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,164,74,0.1) 0%, transparent 70%)' }} />
+      <FloatingOrb
+        size={600}
+        color="radial-gradient(circle, rgba(200,164,74,0.12) 0%, transparent 70%)"
+        style={{ top: -250, left: '50%', transform: 'translateX(-50%)' }}
+        duration={8}
+      />
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <Reveal>
-          <div className="inline-flex items-center gap-2 mb-7 px-4 py-1.5 rounded-full border text-[12px] font-semibold tracking-wide uppercase" style={{ background: 'rgba(200,164,74,0.08)', borderColor: 'rgba(200,164,74,0.2)', color: '#c8a44a' }}>
+          <motion.div
+            className="inline-flex items-center gap-2 mb-7 px-4 py-1.5 rounded-full border text-[12px] font-semibold tracking-wide uppercase"
+            style={{ background: 'rgba(200,164,74,0.08)', borderColor: 'rgba(200,164,74,0.2)', color: '#c8a44a' }}
+            animate={{ boxShadow: ['0 0 0 0 rgba(200,164,74,0)', '0 0 20px 4px rgba(200,164,74,0.15)', '0 0 0 0 rgba(200,164,74,0)'] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
             🚀 Limited spots available each month
-          </div>
+          </motion.div>
           <h2 className="mb-5" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 'clamp(42px,5vw,68px)', fontWeight: 600, color: '#fff', letterSpacing: '-2px', lineHeight: 1.05 }}>
             Your competitors<br />won't wait. <em style={{ color: '#c8a44a' }}>Neither should you.</em>
           </h2>
@@ -636,12 +776,26 @@ function FinalCTA() {
             Every month you're invisible on Google is revenue you're leaving on the table. Let's fix that — starting with a free, no-obligation audit call this week.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a href="#booking" className="inline-flex items-center gap-2 text-[15px] font-bold px-9 py-4.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5" style={{ background: '#c8a44a', color: '#080f1e', padding: '18px 36px' }}>
+            <motion.a
+              href="#booking"
+              className="inline-flex items-center gap-2 text-[15px] font-bold px-9 py-4.5 rounded-xl"
+              style={{ background: '#c8a44a', color: '#080f1e', padding: '18px 36px' }}
+              whileHover={{ y: -4, scale: 1.04, boxShadow: '0 12px 32px rgba(200,164,74,0.45)' }}
+              whileTap={{ scale: 0.97 }}
+              transition={spring}
+            >
               Book Free Audit Now →
-            </a>
-            <a href="mailto:hello@visibilityboost.com" className="inline-flex items-center gap-2 text-[15px] font-medium px-7 py-4.5 rounded-xl border transition-all duration-200 hover:text-white" style={{ color: 'rgba(255,255,255,0.6)', borderColor: 'rgba(255,255,255,0.12)', padding: '18px 28px' }}>
+            </motion.a>
+            <motion.a
+              href="mailto:hello@visibilityboost.com"
+              className="inline-flex items-center gap-2 text-[15px] font-medium px-7 py-4.5 rounded-xl border"
+              style={{ color: 'rgba(255,255,255,0.6)', borderColor: 'rgba(255,255,255,0.12)', padding: '18px 28px' }}
+              whileHover={{ y: -4, borderColor: 'rgba(255,255,255,0.3)', color: '#fff' }}
+              whileTap={{ scale: 0.97 }}
+              transition={spring}
+            >
               Email Us Instead
-            </a>
+            </motion.a>
           </div>
         </Reveal>
       </div>
@@ -649,7 +803,6 @@ function FinalCTA() {
   )
 }
 
-/* ── PAGE ── */
 export default function Home() {
   return (
     <>
